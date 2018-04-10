@@ -1,6 +1,18 @@
+import os
 import asyncio
 from contextlib import closing
 import aiohttp
+import logging
+import logging.config
+import configparser
+
+config = configparser.ConfigParser()
+config.sections()
+config.read('grabber.conf')
+
+DEST_PATH = config['DEFAULTS']['destination_path']
+
+destination_path = os.path.join(DEST_PATH + '%03d.png')
 
 s = 'http://game-a1.granbluefantasy.jp/assets/img/sp/assets/stamp/full/stamp%d.png'
 
@@ -8,7 +20,7 @@ async def retrieve_image(session, i):
     async with session.get(s % i) as response:
         if response.status == 200:
             content = await response.read()
-            with open(r'D:\ggyy\Grandblue\%03d.png' % i, 'wb') as f:
+            with open(destination_path % i, 'wb') as f:
                 f.write(content)
         return response.status
 
